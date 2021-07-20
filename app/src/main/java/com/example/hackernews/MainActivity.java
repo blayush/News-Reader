@@ -2,6 +2,7 @@ package com.example.hackernews;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -10,6 +11,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -46,7 +49,16 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
 
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1);
-
+        listView.setAdapter(arrayAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent=new Intent(getApplicationContext(),Article.class);
+                intent.putExtra("content",content.get(position));
+                startActivity(intent);
+            }
+        });
+        updateListview();
     }
     public void updateListview(){
         Cursor c=articlesData.rawQuery("SELECT*FROM articles",null);
@@ -58,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             do{
                 titles.add(c.getString(titleIndex));
                 content.add(c.getString(contentIndex));
-            }while(c.moveToFirst());
+            }while(c.moveToNext());
             arrayAdapter.notifyDataSetChanged();
         }
     }
